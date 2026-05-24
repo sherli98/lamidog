@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>למידוג</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:#58CC02; --green-dk:#45A800; --green-lt:#D7F5B1;
+  --purple:#6B4FA0; --purple-dk:#4A3570; --purple-lt:#EDE0FF;
+  --blue:#1CB0F6; --blue-dk:#0A8ED9; --blue-lt:#DDF4FF;
+  --red:#FF4B4B; --red-lt:#FFDFE0;
+  --gold:#FFC800; --gold-dk:#E5A900; --gold-lt:#FFF3CC;
+  --orange:#FF9600;
+  --gray:#AFAFAF; --gray-lt:#F7F7F7; --gray-mid:#E5E5E5;
+  --black:#1C1C1E; --text:#3C3C3C;
+  --font:'Heebo',sans-serif;
+  --nav:68px; --top:58px;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { width:100%; height:100%; }
+body { font-family:var(--font); color:var(--text); background:#fff; width:100%; min-height:100vh; overflow-x:hidden; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position:sticky; top:0; z-index:80;
+  background:#fff; height:var(--top);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; border-bottom:2px solid var(--gray-mid);
+  width:100%;
+}
+.tb-logo { display:flex; align-items:center; gap:8px; cursor:pointer; }
+.tb-logo svg { width:34px; height:34px; }
+.tb-name { font-size:21px; font-weight:900; color:var(--purple-dk); letter-spacing:-1px; }
+.tb-name span { color:var(--green-dk); }
+.tb-right { display:flex; align-items:center; gap:12px; }
+.tb-stat { display:flex; align-items:center; gap:4px; font-size:15px; font-weight:800; }
+.tb-stat.s { color:var(--orange); }
+.tb-stat.h { color:var(--red); }
+.tb-stat.x { color:var(--purple); }
+
+/* ── SCREENS ── */
+.screen { display:none; background:#fff; min-height:calc(100vh - var(--top) - var(--nav)); }
+.screen.active { display:block; animation:fadeUp .25s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── BOTTOM NAV ── */
+.bnav {
+  position:fixed; bottom:0; left:0; right:0; z-index:80;
+  height:var(--nav); background:#fff;
+  border-top:2px solid var(--gray-mid);
+  display:flex; align-items:center; justify-content:space-around;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bi { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:6px 12px; }
+.bi-icon { font-size:24px; opacity:.3; transition:.15s; }
+.bi-lbl { font-size:10px; font-weight:800; color:var(--gray); text-transform:uppercase; letter-spacing:.3px; }
+.bi.active .bi-icon { opacity:1; }
+.bi.active .bi-lbl { color:var(--purple); }
+
+/* ── ONBOARDING ── */
+#ob { position:fixed; inset:0; z-index:300; overflow:hidden; }
+.ob-step {
+  display:none; flex-direction:column;
+  position:absolute; top:0; left:0; right:0;
+  min-height:100vh; width:100%;
+  overflow-y:auto; background:#fff;
+}
+.ob-step.on { display:flex; }
+#ob-splash.on {
+  background:linear-gradient(170deg,var(--purple-dk) 0%,var(--purple) 55%,#9B6FD0 100%) !important;
+}
+.ob-bar { height:4px; background:var(--gray-mid); margin:18px 20px 0; border-radius:4px; overflow:hidden; }
+.ob-fill { height:100%; background:var(--green); border-radius:4px; transition:width .4s; }
+.ob-back { width:40px; height:40px; background:var(--gray-lt); border:2px solid var(--gray-mid); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer; margin:12px 20px 0; align-self:flex-start; font-weight:900; color:var(--gray); }
+.ob-body { flex:1; padding:24px 20px 0; display:flex; flex-direction:column; }
+.ob-tag { font-size:11px; font-weight:800; color:var(--green-dk); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+.ob-h { font-size:26px; font-weight:900; color:var(--black); line-height:1.2; margin-bottom:8px; }
+.ob-h em { font-style:normal; color:var(--purple); }
+.ob-sub { font-size:15px; color:var(--gray); margin-bottom:24px; line-height:1.5; }
+.ob-illo { font-size:80px; text-align:center; margin:16px 0 24px; animation:bob 2.5s ease-in-out infinite; }
+@keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+.ob-2col { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+.ob-card { background:#fff; border:2.5px solid var(--gray-mid); border-radius:18px; padding:24px 12px; text-align:center; cursor:pointer; transition:.15s; }
+.ob-card.sel { border-color:var(--blue); background:var(--blue-lt); }
+.ob-card:active { transform:scale(.97); }
+.ob-card .ci { font-size:44px; margin-bottom:10px; }
+.ob-card .cl { font-size:16px; font-weight:800; }
+.ob-choices { display:flex; flex-direction:column; gap:10px; }
+.ob-ch { background:#fff; border:2.5px solid var(--gray-mid); border-radius:16px; padding:15px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; font-size:16px; font-weight:700; transition:.15s; }
+.ob-ch.sel { border-color:var(--blue); background:var(--blue-lt); color:var(--blue-dk); }
+.ob-ch:active { transform:scale(.98); }
+.ob-ch .ci { font-size:26px; flex-shrink:0; }
+.ob-ch .radio { width:24px; height:24px; border:2.5px solid var(--gray-mid); border-radius:50%; margin-right:auto; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:.15s; }
+.ob-ch.sel .radio { background:var(--blue); border-color:var(--blue); }
+.ob-ch.sel .radio::after { content:'✓'; color:#fff; font-size:13px; font-weight:900; }
+.ob-chips { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ob-chip { padding:15px 12px; text-align:center; border:2.5px solid var(--gray-mid); border-radius:14px; font-size:14px; font-weight:700; cursor:pointer; background:#fff; transition:.15s; }
+.ob-chip.sel { border-color:var(--blue); background:var(--blue-lt); color:var(--blue-dk); }
+.ob-field { width:100%; border:none; border-bottom:3px solid var(--gray-mid); padding:14px 0; font-size:22px; font-weight:800; color:var(--black); font-family:var(--font); outline:none; background:transparent; }
+.ob-field:focus { border-bottom-color:var(--blue); }
+.ob-field::placeholder { color:var(--gray-mid); font-weight:600; }
+.ob-load { margin-bottom:18px; }
+.ob-load-row { font-size:14px; font-weight:700; display:flex; justify-content:space-between; margin-bottom:6px; }
+.ob-load-pct { color:var(--green-dk); }
+.ob-load-bar { background:var(--gray-mid); border-radius:6px; height:10px; overflow:hidden; }
+.ob-load-fill { height:100%; background:var(--green); border-radius:6px; width:0%; transition:width 1.4s ease; }
+.price-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.price-card { border:2.5px solid var(--gray-mid); border-radius:18px; padding:18px 14px; cursor:pointer; background:#fff; position:relative; transition:.15s; }
+.price-card.sel { border-color:var(--green); background:var(--green-lt); }
+.price-card .chk { display:none; position:absolute; top:10px; left:10px; width:22px; height:22px; background:var(--green); border-radius:50%; font-size:12px; color:#fff; font-weight:900; align-items:center; justify-content:center; }
+.price-card.sel .chk { display:flex; }
+.p-per { font-size:12px; font-weight:700; color:var(--gray); margin-bottom:4px; }
+.p-amt { font-size:24px; font-weight:900; color:var(--black); }
+.p-day { font-size:11px; color:var(--gray); margin-top:2px; }
+.p-tag { display:inline-block; margin-top:8px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:800; }
+.p-free { background:var(--green-lt); color:var(--green-dk); }
+.p-best { background:var(--gold-lt); color:var(--gold-dk); }
+.ob-cta { padding:16px 20px 40px; }
+.btn-go { width:100%; background:var(--green); color:#fff; border:none; border-radius:16px; padding:17px; font-size:18px; font-weight:900; font-family:var(--font); cursor:pointer; box-shadow:0 4px 0 var(--green-dk); transition:.1s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-go:active { transform:translateY(3px); box-shadow:0 1px 0 var(--green-dk); }
+.btn-skip { display:block; text-align:center; margin-top:14px; font-size:14px; font-weight:700; color:var(--gray); cursor:pointer; background:none; border:none; font-family:var(--font); width:100%; }
+
+/* SPLASH is now inline on ob-splash div */
+.spl-svg { width:120px; height:120px; margin-bottom:24px; }
+.spl-name { font-size:52px; font-weight:900; color:#fff; letter-spacing:-2px; margin-bottom:10px; }
+.spl-tag { font-size:17px; color:rgba(255,255,255,.75); margin-bottom:48px; line-height:1.5; }
+.btn-spl { background:#fff; color:var(--purple-dk); border:none; border-radius:16px; padding:18px 40px; font-size:19px; font-weight:900; cursor:pointer; font-family:var(--font); box-shadow:0 4px 0 rgba(0,0,0,.2); width:100%; transition:.1s; }
+.btn-spl:active { transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.2); }
+
+/* ── HOME ── */
+.home-hero { background:linear-gradient(135deg,var(--purple-dk),var(--purple)); padding:22px 18px 26px; border-radius:0 0 26px 26px; overflow:hidden; position:relative; }
+.home-hero::after { content:''; position:absolute; width:180px; height:180px; background:rgba(255,255,255,.06); border-radius:50%; top:-60px; left:-40px; }
+.dog-row { display:flex; align-items:center; gap:12px; position:relative; z-index:1; }
+.dog-av { width:56px; height:56px; background:rgba(255,255,255,.15); border:2.5px solid rgba(255,255,255,.35); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
+.dog-name { font-size:21px; font-weight:900; color:#fff; }
+.dog-sub { font-size:13px; color:rgba(255,255,255,.65); margin-top:2px; }
+.str-pill { margin-right:auto; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.3); border-radius:20px; padding:6px 14px; font-size:14px; font-weight:800; color:#fff; display:flex; align-items:center; gap:5px; }
+.xp-row { display:flex; align-items:center; gap:10px; margin-top:16px; position:relative; z-index:1; }
+.xp-lbl { font-size:13px; font-weight:700; color:rgba(255,255,255,.7); }
+.xp-bar { flex:1; height:10px; background:rgba(255,255,255,.2); border-radius:10px; overflow:hidden; }
+.xp-fill { height:100%; background:var(--gold); border-radius:10px; width:0%; transition:width 1s ease; }
+.xp-num { font-size:13px; font-weight:800; color:var(--gold); }
+
+.day-card { margin:14px 14px 0; background:var(--green-lt); border:2px solid var(--green); border-radius:18px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; }
+.day-ico { font-size:36px; flex-shrink:0; animation:bob 2s ease-in-out infinite; }
+.day-info { flex:1; }
+.day-title { font-size:16px; font-weight:800; color:var(--black); }
+.day-sub { font-size:13px; color:var(--green-dk); font-weight:600; margin-top:2px; }
+.day-prog { margin-top:8px; background:rgba(0,0,0,.1); border-radius:6px; height:8px; overflow:hidden; }
+.day-fill { height:100%; background:var(--green); border-radius:6px; width:0%; transition:width .8s; }
+.day-btn { background:var(--green); color:#fff; border:none; border-radius:12px; padding:10px 18px; font-size:14px; font-weight:800; font-family:var(--font); cursor:pointer; box-shadow:0 3px 0 var(--green-dk); flex-shrink:0; transition:.1s; }
+.day-btn:active { transform:translateY(2px); box-shadow:0 1px 0 var(--green-dk); }
+
+.sec { padding:14px 14px 0; }
+.sec-h { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.sec-title { font-size:17px; font-weight:900; color:var(--black); }
+.sec-link { font-size:14px; font-weight:700; color:var(--purple); cursor:pointer; }
+.task { background:#fff; border:2px solid var(--gray-mid); border-radius:14px; padding:13px 14px; display:flex; align-items:center; gap:12px; margin-bottom:10px; cursor:pointer; transition:.15s; }
+.task:active { transform:scale(.98); }
+.task-chk { width:28px; height:28px; border:2.5px solid var(--gray-mid); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; transition:.2s; }
+.task-chk.done { background:var(--green); border-color:var(--green); color:#fff; }
+.task-info { flex:1; }
+.task-name { font-size:15px; font-weight:700; }
+.task-sub { font-size:12px; color:var(--gray); margin-top:2px; }
+.task-xp { background:var(--gold-lt); color:var(--gold-dk); font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; }
+
+.tip-card { background:linear-gradient(135deg,var(--purple-dk),var(--purple)); border-radius:16px; padding:16px; display:flex; gap:12px; align-items:flex-start; }
+.tip-ico { font-size:30px; flex-shrink:0; }
+.tip-tag { font-size:10px; font-weight:800; color:rgba(255,255,255,.65); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px; }
+.tip-txt { font-size:14px; font-weight:600; color:#fff; line-height:1.5; }
+.divider { height:1px; background:var(--gray-mid); margin:14px 14px; }
+.scroll-pad { height:calc(var(--nav) + 20px); }
+
+/* ── ROADMAP ── */
+.map-hdr { background:var(--purple-dk); padding:20px 18px 24px; border-radius:0 0 22px 22px; }
+.map-hdr h1 { font-size:22px; font-weight:900; color:#fff; }
+.map-hdr p { font-size:13px; color:rgba(255,255,255,.6); margin-top:4px; }
+.map-prog { margin-top:14px; background:rgba(255,255,255,.15); border-radius:10px; height:10px; overflow:hidden; }
+.map-fill { height:100%; background:var(--gold); border-radius:10px; }
+.map-lbl { font-size:12px; color:rgba(255,255,255,.6); font-weight:600; margin-top:6px; }
+
+/* Roadmap snake map */
+.map-body { background:#fff; padding:0 0 8px; }
+.lv-banner { margin:16px 14px 0; border-radius:14px; padding:13px 18px; display:flex; align-items:center; gap:10px; font-size:16px; font-weight:900; color:#fff; }
+
+/* Snake row — single node centered with offset */
+.snake-row { display:flex; align-items:flex-start; justify-content:center; padding:6px 0; background:#fff; }
+.snake-row.left  { padding-right:38%; }
+.snake-row.right { padding-left:38%; }
+.snake-row.mid   { }
+
+/* connector */
+.snake-conn { display:flex; justify-content:center; height:40px; background:#fff; }
+
+/* Node */
+.node { display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer; }
+.node-bub {
+  width:76px; height:76px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:32px;
+  position:relative; border:4px solid transparent;
+  box-shadow:0 5px 0 rgba(0,0,0,.15); transition:.15s;
+}
+.node-bub:active { transform:scale(.94); }
+.node-bub.done { background:var(--green); border-color:var(--green-dk); }
+.node-bub.current { background:var(--purple); border-color:var(--purple-dk); box-shadow:0 5px 0 var(--purple-dk),0 0 0 7px rgba(107,79,160,.18); animation:pulse 2s infinite; }
+.node-bub.idle { background:#fff; border-color:var(--gray-mid); box-shadow:0 5px 0 var(--gray-mid); }
+.node-bub.locked { background:var(--gray-lt); border-color:var(--gray-mid); box-shadow:0 5px 0 var(--gray-mid); opacity:.7; }
+@keyframes pulse { 0%,100%{box-shadow:0 5px 0 var(--purple-dk),0 0 0 7px rgba(107,79,160,.18);} 50%{box-shadow:0 5px 0 var(--purple-dk),0 0 0 12px rgba(107,79,160,.08);} }
+.node-crown { position:absolute; top:-12px; right:-4px; font-size:20px; }
+.node-lock { position:absolute; top:2px; right:2px; font-size:16px; }
+.node-notif { position:absolute; top:-4px; right:-4px; width:23px; height:23px; background:var(--red); border:2.5px solid #fff; border-radius:50%; font-size:11px; font-weight:900; color:#fff; display:flex; align-items:center; justify-content:center; }
+.node-lbl { font-size:12px; font-weight:700; color:var(--gray); text-align:center; max-width:84px; line-height:1.3; }
+.node-lbl.cur { color:var(--purple-dk); font-weight:800; }
+
+/* ── LESSON PREVIEW MODAL ── */
+.modal-bg { display:none; position:fixed; inset:0; z-index:400; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); align-items:flex-end; }
+.modal-bg.open { display:flex; }
+.modal-sheet { background:#fff; border-radius:24px 24px 0 0; width:100%; padding:0 0 44px; animation:slideUp .3s ease; max-height:90vh; overflow-y:auto; }
+@keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+.modal-handle { width:40px; height:4px; background:var(--gray-mid); border-radius:2px; margin:14px auto; }
+.modal-hero { margin:0 14px; border-radius:18px; padding:24px; text-align:center; }
+.modal-emoji { font-size:56px; margin-bottom:8px; }
+.modal-title { font-size:24px; font-weight:900; color:var(--black); }
+.modal-xp { display:inline-flex; align-items:center; gap:6px; margin-top:8px; background:var(--gold-lt); color:var(--gold-dk); padding:6px 16px; border-radius:20px; font-size:14px; font-weight:800; }
+.modal-body { padding:14px 18px 0; }
+.modal-steps-title { font-size:15px; font-weight:800; margin-bottom:12px; }
+.mstep { display:flex; gap:12px; margin-bottom:14px; align-items:flex-start; }
+.mstep-n { width:28px; height:28px; background:var(--purple); color:#fff; border-radius:50%; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.mstep-t { font-size:14px; color:var(--text); line-height:1.55; }
+.btn-start { width:100%; background:var(--green); color:#fff; border:none; border-radius:14px; padding:16px; font-size:18px; font-weight:900; font-family:var(--font); cursor:pointer; box-shadow:0 4px 0 var(--green-dk); margin-top:8px; transition:.1s; }
+.btn-start:active { transform:translateY(3px); box-shadow:0 1px 0 var(--green-dk); }
+
+/* ── LESSON SCREEN ── */
+#lesson-screen { display:none; position:fixed; inset:0; z-index:500; background:#fff; flex-direction:column; }
+#lesson-screen.open { display:flex; }
+.ls-top { display:flex; align-items:center; gap:12px; padding:13px 14px; border-bottom:2px solid var(--gray-mid); flex-shrink:0; }
+.ls-close { width:38px; height:38px; background:var(--gray-lt); border:2px solid var(--gray-mid); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:900; color:var(--gray); cursor:pointer; flex-shrink:0; }
+.ls-prog-wrap { flex:1; background:var(--gray-mid); border-radius:10px; height:14px; overflow:hidden; }
+.ls-prog-fill { height:100%; background:var(--green); border-radius:10px; transition:width .4s ease; }
+.ls-hearts-disp { font-size:16px; font-weight:800; color:var(--red); flex-shrink:0; }
+.ls-hero { background:linear-gradient(135deg,var(--purple-dk),var(--purple)); padding:22px 18px 26px; text-align:center; flex-shrink:0; }
+.ls-emoji-big { font-size:64px; display:block; animation:bounceIn .35s ease; }
+@keyframes bounceIn { 0%{transform:scale(.4);opacity:0;} 70%{transform:scale(1.1);} 100%{transform:scale(1);opacity:1;} }
+.ls-lesson-name { font-size:24px; font-weight:900; color:#fff; margin-top:8px; }
+.ls-step-info { font-size:14px; color:rgba(255,255,255,.65); margin-top:4px; }
+.ls-timer { display:inline-block; margin-top:12px; background:rgba(255,255,255,.15); border:2px solid rgba(255,255,255,.3); border-radius:14px; padding:7px 20px; font-size:20px; font-weight:900; color:#fff; letter-spacing:2px; }
+.ls-body { flex:1; overflow-y:auto; padding:16px; background:#fff; }
+.ls-card { background:#fff; border:2.5px solid var(--gray-mid); border-radius:20px; padding:22px 16px; }
+.ls-card-icon { width:58px; height:58px; background:var(--purple-lt); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 14px; border:2px solid rgba(107,79,160,.15); }
+.ls-card-title { font-size:20px; font-weight:900; text-align:center; color:var(--black); margin-bottom:8px; }
+.ls-card-desc { font-size:15px; color:var(--gray); text-align:center; line-height:1.6; }
+.ls-instr { background:var(--blue-lt); border:2px solid var(--blue); border-radius:14px; padding:13px 14px; margin-top:14px; }
+.ls-instr-lbl { font-size:11px; font-weight:800; color:var(--blue-dk); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px; }
+.ls-instr-txt { font-size:15px; color:var(--black); font-weight:600; line-height:1.5; }
+.ls-att-wrap { margin-top:16px; }
+.ls-att-lbl { font-size:14px; font-weight:800; color:var(--black); margin-bottom:10px; text-align:center; }
+.ls-att-row { display:flex; gap:12px; justify-content:center; }
+.att-btn { width:52px; height:52px; border-radius:50%; border:3px solid var(--gray-mid); background:#fff; font-size:22px; cursor:pointer; transition:.15s; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.att-btn.ok { background:var(--green); border-color:var(--green-dk); box-shadow:0 3px 0 var(--green-dk); color:#fff; }
+.att-btn.no { background:var(--red); border-color:#cc0000; box-shadow:0 3px 0 #cc0000; color:#fff; }
+.att-btn.pend { background:var(--gray-lt); }
+.ls-tip { background:linear-gradient(135deg,var(--purple-dk),var(--purple)); border-radius:14px; padding:14px; margin-top:12px; display:flex; gap:12px; align-items:flex-start; }
+.ls-tip-ico { font-size:24px; flex-shrink:0; }
+.ls-tip-txt { font-size:14px; color:rgba(255,255,255,.9); line-height:1.5; }
+.ls-footer { padding:14px; border-top:2px solid var(--gray-mid); flex-shrink:0; background:#fff; }
+.btn-next { width:100%; color:#fff; border:none; border-radius:14px; padding:16px; font-size:18px; font-weight:900; font-family:var(--font); cursor:pointer; transition:.1s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-next:active { transform:translateY(3px); }
+.btn-next.purple { background:var(--purple); box-shadow:0 4px 0 var(--purple-dk); }
+.btn-next.purple:active { box-shadow:0 1px 0 var(--purple-dk); }
+.btn-next.green { background:var(--green); box-shadow:0 4px 0 var(--green-dk); }
+.btn-next.green:active { box-shadow:0 1px 0 var(--green-dk); }
+.btn-next:disabled { background:var(--gray-mid); box-shadow:none; cursor:default; }
+
+/* Success */
+#ls-success { display:none; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:40px 24px; text-align:center; background:#fff; }
+#ls-success.show { display:flex; }
+.suc-burst { font-size:90px; animation:pop .5s ease; margin-bottom:14px; }
+@keyframes pop { 0%{transform:scale(0);opacity:0;} 70%{transform:scale(1.2);} 100%{transform:scale(1);opacity:1;} }
+.suc-title { font-size:34px; font-weight:900; color:var(--black); margin-bottom:8px; }
+.suc-sub { font-size:16px; color:var(--gray); margin-bottom:22px; }
+.stars-row { display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
+.star { font-size:44px; opacity:0; animation:starPop .4s ease forwards; }
+.star:nth-child(1){animation-delay:.2s;} .star:nth-child(2){animation-delay:.5s;} .star:nth-child(3){animation-delay:.8s;}
+@keyframes starPop { 0%{opacity:0;transform:scale(0) rotate(-30deg);} 70%{transform:scale(1.2) rotate(8deg);} 100%{opacity:1;transform:scale(1) rotate(0);} }
+.xp-rew { background:linear-gradient(135deg,var(--gold),#E8C060); border-radius:20px; padding:16px 40px; font-size:26px; font-weight:900; color:#fff; box-shadow:0 4px 0 var(--gold-dk); margin-bottom:28px; }
+.btn-finish { width:100%; background:var(--green); color:#fff; border:none; border-radius:16px; padding:17px; font-size:18px; font-weight:900; font-family:var(--font); cursor:pointer; box-shadow:0 4px 0 var(--green-dk); transition:.1s; }
+.btn-finish:active { transform:translateY(3px); box-shadow:0 1px 0 var(--green-dk); }
+
+/* ── WELLNESS ── */
+.well-hdr { background:linear-gradient(135deg,#3D9970,#5DB882); padding:20px 18px 26px; border-radius:0 0 22px 22px; }
+.well-hdr h1 { font-size:22px; font-weight:900; color:#fff; }
+.well-hdr p { font-size:13px; color:rgba(255,255,255,.65); margin-top:4px; }
+.well-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:14px 14px 0; }
+.wstat { background:#fff; border:2px solid var(--gray-mid); border-radius:14px; padding:14px 10px; text-align:center; }
+.wstat-ico { font-size:24px; margin-bottom:6px; }
+.wstat-val { font-size:22px; font-weight:900; }
+.wstat-unit { font-size:11px; color:var(--gray); }
+.wstat-lbl { font-size:11px; color:var(--gray); font-weight:700; margin-top:2px; }
+.vax-row { background:#fff; border:2px solid var(--gray-mid); border-radius:14px; padding:13px 14px; display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.vax-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.vax-name { font-size:14px; font-weight:700; flex:1; }
+.vax-date { font-size:12px; color:var(--gray); }
+.vax-tag { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:800; }
+
+/* ── CARE ── */
+.care-hdr { background:linear-gradient(135deg,#E67E22,#F39C12); padding:20px 18px 26px; border-radius:0 0 22px 22px; }
+.care-hdr h1 { font-size:22px; font-weight:900; color:#fff; }
+.ev-card { background:#fff; border:2px solid var(--gray-mid); border-radius:14px; padding:13px 14px; display:flex; gap:12px; align-items:center; margin-bottom:10px; cursor:pointer; }
+.ev-date { background:var(--purple); border-radius:10px; padding:8px 10px; text-align:center; flex-shrink:0; }
+.ev-d { font-size:20px; font-weight:900; color:#fff; line-height:1; }
+.ev-m { font-size:10px; font-weight:700; color:rgba(255,255,255,.75); }
+.ev-info { flex:1; }
+.ev-name { font-size:14px; font-weight:700; }
+.ev-time { font-size:12px; color:var(--gray); margin-top:3px; }
+.ev-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.fab { position:fixed; bottom:calc(var(--nav) + 14px); left:50%; transform:translateX(-50%); background:var(--green); color:#fff; border:none; border-radius:28px; padding:13px 28px; font-size:15px; font-weight:900; font-family:var(--font); cursor:pointer; box-shadow:0 4px 0 var(--green-dk); display:flex; align-items:center; gap:8px; white-space:nowrap; }
+
+/* ── CHAT ── */
+.chat-hdr { background:linear-gradient(135deg,var(--purple-dk),var(--purple)); padding:20px 18px 24px; border-radius:0 0 22px 22px; text-align:center; }
+.chat-hdr .ai { font-size:48px; margin-bottom:8px; }
+.chat-hdr h1 { font-size:20px; font-weight:900; color:#fff; }
+.chat-hdr p { font-size:13px; color:rgba(255,255,255,.65); margin-top:4px; }
+.chat-area { padding:14px 14px 0; display:flex; flex-direction:column; gap:10px; min-height:200px; }
+.bubble { max-width:82%; padding:12px 16px; border-radius:18px; font-size:15px; line-height:1.5; animation:fadeUp .25s ease; }
+.bubble.bot { background:var(--gray-lt); border:1.5px solid var(--gray-mid); border-bottom-right-radius:4px; align-self:flex-end; }
+.bubble.user { background:var(--purple); color:#fff; font-weight:600; border-bottom-left-radius:4px; align-self:flex-start; }
+.t-ind { display:flex; gap:5px; padding:14px 16px; background:var(--gray-lt); border-radius:18px; border-bottom-right-radius:4px; width:fit-content; align-self:flex-end; }
+.t-dot { width:8px; height:8px; background:var(--gray); border-radius:50%; animation:typing 1.2s infinite; }
+.t-dot:nth-child(2){animation-delay:.2s;} .t-dot:nth-child(3){animation-delay:.4s;}
+@keyframes typing { 0%,60%,100%{transform:translateY(0);} 30%{transform:translateY(-8px);} }
+.qqs { padding:12px 14px 0; display:flex; flex-wrap:wrap; gap:8px; }
+.qq { background:#fff; border:2px solid var(--gray-mid); border-radius:20px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font); transition:.15s; }
+.qq:active { background:var(--purple-lt); border-color:var(--purple); }
+.chat-bar { padding:12px 14px; display:flex; gap:10px; background:#fff; border-top:2px solid var(--gray-mid); position:sticky; bottom:var(--nav); }
+.chat-inp { flex:1; background:var(--gray-lt); border:2px solid var(--gray-mid); border-radius:24px; padding:12px 18px; font-size:15px; color:var(--black); font-family:var(--font); outline:none; }
+.chat-inp::placeholder { color:var(--gray); }
+.chat-send { width:46px; height:46px; background:var(--purple); border:none; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; flex-shrink:0; box-shadow:0 3px 0 var(--purple-dk); transition:.1s; }
+.chat-send:active { transform:translateY(2px); box-shadow:0 1px 0 var(--purple-dk); }
+
+/* ── QUIZ STYLES ── */
+.quiz-q-block { margin-bottom:22px; }
+.quiz-q-text { font-size:16px; font-weight:800; color:var(--black); margin-bottom:12px; line-height:1.4; }
+.quiz-option {
+  background:#fff; border:2.5px solid var(--gray-mid);
+  border-radius:14px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; font-size:15px; font-weight:600;
+  margin-bottom:8px; transition:.15s; position:relative;
+}
+.quiz-option:active { transform:scale(.98); }
+.quiz-option.correct { border-color:var(--green); background:var(--green-lt); color:var(--green-dk); pointer-events:none; }
+.quiz-option.wrong   { border-color:var(--red);   background:var(--red-lt);   color:var(--red);      pointer-events:none; }
+.quiz-option.locked  { pointer-events:none; opacity:.6; }
+.quiz-option .opt-letter {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--gray-lt); border:2px solid var(--gray-mid);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:900; flex-shrink:0; transition:.15s;
+}
+.quiz-option.correct .opt-letter { background:var(--green); border-color:var(--green-dk); color:#fff; }
+.quiz-option.wrong   .opt-letter { background:var(--red);   border-color:#cc0000;         color:#fff; }
+.quiz-result-banner {
+  border-radius:14px; padding:14px 16px; margin-bottom:14px;
+  font-size:15px; font-weight:800; text-align:center;
+  display:none;
+}
+.quiz-result-banner.show { display:block; }
+.quiz-result-banner.ok  { background:var(--green-lt); color:var(--green-dk); border:2px solid var(--green); }
+.quiz-result-banner.bad { background:var(--red-lt);   color:var(--red);      border:2px solid var(--red); }
+.quiz-score-circle {
+  width:100px; height:100px; border-radius:50%;
+  background:var(--purple-lt); border:4px solid var(--purple);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  margin:0 auto 20px; font-size:28px; font-weight:900; color:var(--purple-dk);
+}
+.quiz-score-circle small { font-size:12px; font-weight:700; color:var(--purple); margin-top:2px; }
+
+</style>
+</head>
+<body>
+
+<!-- ════ ONBOARDING ════ -->
+<div id="ob">
+
+<div class="ob-step on" id="ob-splash" style="min-height:100vh;background:linear-gradient(170deg,var(--purple-dk) 0%,var(--purple) 55%,#9B6FD0 100%);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 28px;">
+  <svg class="spl-svg" viewBox="0 0 120 120" fill="none">
+    <rect width="120" height="120" rx="30" fill="rgba(255,255,255,.12)"/>
+    <circle cx="60" cy="68" r="20" fill="#fff"/>
+    <ellipse cx="47" cy="55" rx="8" ry="13" fill="#fff" transform="rotate(-18,47,55)"/>
+    <ellipse cx="73" cy="55" rx="8" ry="13" fill="#fff" transform="rotate(18,73,55)"/>
+    <circle cx="54" cy="70" r="4" fill="#4A3570"/>
+    <circle cx="66" cy="70" r="4" fill="#4A3570"/>
+    <ellipse cx="60" cy="77" rx="5.5" ry="3.5" fill="#FFB5C2"/>
+    <path d="M53 83 Q60 89 67 83" stroke="#4A3570" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="22" cy="80" r="13" fill="rgba(255,255,255,.78)"/>
+    <ellipse cx="15" cy="70" rx="5.5" ry="8.5" fill="rgba(255,255,255,.78)" transform="rotate(-22,15,70)"/>
+    <ellipse cx="29" cy="70" rx="5" ry="8" fill="rgba(255,255,255,.78)" transform="rotate(22,29,70)"/>
+    <circle cx="19" cy="82" r="2.5" fill="#4A3570"/>
+    <circle cx="25" cy="82" r="2.5" fill="#4A3570"/>
+    <circle cx="98" cy="80" r="13" fill="rgba(255,255,255,.78)"/>
+    <ellipse cx="91" cy="70" rx="5" ry="8" fill="rgba(255,255,255,.78)" transform="rotate(-22,91,70)"/>
+    <ellipse cx="105" cy="70" rx="5.5" ry="8.5" fill="rgba(255,255,255,.78)" transform="rotate(22,105,70)"/>
+    <circle cx="95" cy="82" r="2.5" fill="#4A3570"/>
+    <circle cx="101" cy="82" r="2.5" fill="#4A3570"/>
+    <text x="12" y="32" font-size="15" fill="rgba(255,255,255,.6)">✦</text>
+    <text x="90" y="26" font-size="12" fill="rgba(255,255,255,.5)">✦</text>
+    <text x="52" y="20" font-size="10" fill="rgba(255,255,255,.7)">✦</text>
+  </svg>
+  <div class="spl-name">למידוג</div>
+  <div class="spl-tag">אימון כלבים חכם ומשחקי<br>בעברית 🐾</div>
+  <button class="btn-spl" onclick="obNext()">בואו נתחיל! →</button>
+</div>
+
+<div class="ob-step" id="ob-1">
+  <div class="ob-bar"><div class="ob-fill" style="width:10%"></div></div>
+  <div class="ob-body">
+    <div class="ob-tag">פרופיל הכלב • 1/5</div>
+    <div class="ob-h">הכלב שלך הוא:</div>
+    <div class="ob-2col">
+      <div class="ob-card" onclick="pickOne(this)"><div class="ci">♀️</div><div class="cl">נקבה</div></div>
+      <div class="ob-card" onclick="pickOne(this)"><div class="ci">♂️</div><div class="cl">זכר</div></div>
+    </div>
+  </div>
+  <div class="ob-cta"><button class="btn-go" onclick="obNext()">המשך →</button></div>
+</div>
+
+<div class="ob-step" id="ob-2">
+  <div class="ob-bar"><div class="ob-fill" style="width:25%"></div></div>
+  <div class="ob-back" onclick="obBack()">←</div>
+  <div class="ob-body">
+    <div class="ob-tag">פרופיל הכלב • 2/5</div>
+    <div class="ob-h">כמה ותיק הכלב שלך?</div>
+    <div class="ob-sub">הגיל קובע את תכנית האימון</div>
+    <div class="ob-choices">
+      <div class="ob-ch" onclick="pickCh(this)"><span class="ci">🐣</span>פחות מ-6 חודשים<span class="radio"></span></div>
+      <div class="ob-ch" onclick="pickCh(this)"><span class="ci">🐶</span>6-12 חודשים<span class="radio"></span></div>
+      <div class="ob-ch" onclick="pickCh(this)"><span class="ci">🐕</span>1-2 שנים<span class="radio"></span></div>
+      <div class="ob-ch" onclick="pickCh(this)"><span class="ci">🦮</span>2-7 שנים<span class="radio"></span></div>
+      <div class="ob-ch" onclick="pickCh(this)"><span class="ci">🐾</span>מעל 7 שנים<span class="radio"></span></div>
+    </div>
+  </div>
+  <div class="ob-cta"><button class="btn-go" onclick="obNext()">המשך →</button></div>
+</div>
+
+<div class="ob-step" id="ob-3">
+  <div class="ob-bar"><div class="ob-fill" style="width:40%"></div></div>
+  <div class="ob-back" onclick="obBack()">←</div>
+  <div class="ob-body">
+    <div class="ob-tag">פרופיל הכלב • 3/5</div>
+    <div class="ob-h">מה שם הכלב שלך?</div>
+    <div class="ob-sub">למידוג תתאים את החוויה אישית עבורך</div>
+    <div class="ob-illo">🐕</div>
+    <input class="ob-field" id="ob-name-inp" placeholder="שם הכלב..." oninput="APP.dog.name=this.value;"/>
+  </div>
+  <div class="ob-cta"><button class="btn-go" onclick="obNext()">המשך →</button></div>
+</div>
+
+<div class="ob-step" id="ob-4">
+  <div class="ob-bar"><div class="ob-fill" style="width:55%"></div></div>
+  <div class="ob-back" onclick="obBack()">←</div>
+  <div class="ob-body">
+    <div class="ob-tag">פרופיל הכלב • 4/5</div>
+    <div class="ob-h">איזה גזע?</div>
+    <div class="ob-sub">טיפים מותאמים לגזע לאימון מהיר יותר</div>
+    <div class="ob-chips">
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">לברדור</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">גולדן רטריבר</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">רועה גרמני</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">בולדוג</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">פודל</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">שיצו</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">צ'יוואווה</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">בורדר קולי</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">רוטוויילר</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">מעורב</div>
+    </div>
+    <input class="ob-field" placeholder="או הקלד גזע..." style="margin-top:16px"/>
+  </div>
+  <div class="ob-cta">
+    <button class="btn-go" onclick="obNext()">המשך →</button>
+    <button class="btn-skip" onclick="obNext()">אני לא יודע את הגזע עדיין</button>
+  </div>
+</div>
+
+<div class="ob-step" id="ob-5">
+  <div class="ob-bar"><div class="ob-fill" style="width:70%"></div></div>
+  <div class="ob-back" onclick="obBack()">←</div>
+  <div class="ob-body">
+    <div class="ob-tag">פרופיל הכלב • 5/5</div>
+    <div class="ob-h">מה תרצה <em>לשפר</em>?</div>
+    <div class="ob-sub">בחר את כל מה שרלוונטי</div>
+    <div class="ob-choices">
+      <div class="ob-ch" onclick="this.classList.toggle('sel')"><span class="ci">🚶</span>בעיות הליכה<span class="radio"></span></div>
+      <div class="ob-ch" onclick="this.classList.toggle('sel')"><span class="ci">🔊</span>נביחה מופרזת<span class="radio"></span></div>
+      <div class="ob-ch" onclick="this.classList.toggle('sel')"><span class="ci">😰</span>חרדת פרידה<span class="radio"></span></div>
+      <div class="ob-ch" onclick="this.classList.toggle('sel')"><span class="ci">🦷</span>נשיכה / לעיסה<span class="radio"></span></div>
+      <div class="ob-ch" onclick="this.classList.toggle('sel')"><span class="ci">🎓</span>פקודות בסיסיות<span class="radio"></span></div>
+    </div>
+  </div>
+  <div class="ob-cta">
+    <button class="btn-go" onclick="obNext()">המשך →</button>
+    <button class="btn-skip" onclick="obNext()">הכל בסדר, רק אימון כללי</button>
+  </div>
+</div>
+
+<div class="ob-step" id="ob-6">
+  <div class="ob-body" style="align-items:center;text-align:center;padding-top:56px;">
+    <div style="font-size:56px;margin-bottom:20px;">🧠</div>
+    <div style="font-size:26px;font-weight:900;color:var(--black);line-height:1.3;margin-bottom:32px;">יוצרים תכנית<br>אישית עבורך...</div>
+    <div id="ob-loads" style="width:100%;text-align:right;"></div>
+    <div style="margin-top:24px;background:var(--green-lt);border:2px solid var(--green);border-radius:18px;padding:20px;width:100%;">
+      <div style="font-size:30px;font-weight:900;color:var(--green-dk);">10 מיליון+ 🐾</div>
+      <div style="font-size:13px;color:var(--gray);margin-top:4px;">בעלי כלבים מאושרים</div>
+      <div style="font-size:22px;margin-top:8px;">⭐⭐⭐⭐⭐</div>
+      <div style="font-size:13px;color:var(--text);margin-top:8px;font-weight:600;line-height:1.5;" id="ob-review">"הכלב שלי למד שב תוך יומיים!"</div>
+    </div>
+  </div>
+</div>
+
+<div class="ob-step" id="ob-7">
+  <div class="ob-body" style="padding-top:28px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="background:var(--gray-lt);border-radius:18px;overflow:hidden;border:2px solid var(--gray-mid);">
+        <div style="background:var(--red-lt);padding:12px;text-align:center;font-size:13px;font-weight:800;color:var(--red);">✕ לפני</div>
+        <div style="padding:18px;font-size:36px;text-align:center;">😤</div>
+      </div>
+      <div style="background:var(--green-lt);border-radius:18px;overflow:hidden;border:2px solid var(--green);">
+        <div style="background:var(--green-lt);padding:12px;text-align:center;font-size:13px;font-weight:800;color:var(--green-dk);">✓ אחרי</div>
+        <div style="padding:18px;font-size:36px;text-align:center;">😊</div>
+      </div>
+    </div>
+    <div style="font-size:24px;font-weight:900;color:var(--black);margin-bottom:16px;text-align:center;">בחר תכנית</div>
+    <div class="price-grid">
+      <div class="price-card sel" onclick="pickPrice(this)"><div class="chk">✓</div><div class="p-per">שבוע</div><div class="p-amt">חינם!</div><div class="p-day">7 ימי ניסיון</div><div class="p-tag p-free">ניסיון חינם</div></div>
+      <div class="price-card" onclick="pickPrice(this)"><div class="chk">✓</div><div class="p-per">3 חודשים</div><div class="p-amt">₪97.90</div><div class="p-day">₪1.09/יום</div><div class="p-tag p-best">הכי כדאי</div></div>
+      <div class="price-card" onclick="pickPrice(this)"><div class="chk">✓</div><div class="p-per">6 חודשים</div><div class="p-amt">₪149.90</div><div class="p-day">₪0.82/יום</div></div>
+      <div class="price-card" onclick="pickPrice(this)"><div class="chk">✓</div><div class="p-per">שנה</div><div class="p-amt">₪199.90</div><div class="p-day">₪0.55/יום</div></div>
+    </div>
+  </div>
+  <div class="ob-cta">
+    <button class="btn-go" onclick="launchApp()">המשך →</button>
+    <div style="display:flex;justify-content:center;gap:20px;margin-top:12px;">
+      <span style="font-size:12px;color:var(--gray);cursor:pointer">כניסה</span>
+      <span style="font-size:12px;color:var(--gray);cursor:pointer">תנאי שימוש</span>
+      <span style="font-size:12px;color:var(--gray);cursor:pointer">פרטיות</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /ob -->
+
+<!-- ════ TOPBAR ════ -->
+<div class="topbar" id="main-top" style="display:none">
+  <div class="tb-logo" onclick="tab('home')">
+    <svg viewBox="0 0 34 34" fill="none">
+      <rect width="34" height="34" rx="9" fill="var(--purple-lt)"/>
+      <circle cx="17" cy="20" r="8" fill="var(--purple-dk)"/>
+      <ellipse cx="12" cy="15" rx="4" ry="6" fill="var(--purple-dk)" transform="rotate(-18,12,15)"/>
+      <ellipse cx="22" cy="15" rx="4" ry="6" fill="var(--purple-dk)" transform="rotate(18,22,15)"/>
+      <circle cx="14.5" cy="21" r="1.8" fill="#fff"/>
+      <circle cx="19.5" cy="21" r="1.8" fill="#fff"/>
+      <path d="M14 25 Q17 28 20 25" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </svg>
+    <span class="tb-name">למי<span>דוג</span></span>
+  </div>
+  <div class="tb-right">
+    <div class="tb-stat s">🔥 <span id="tb-streak">7</span></div>
+    <div class="tb-stat h">❤️ <span id="tb-hearts">5</span></div>
+    <div class="tb-stat x">⚡ <span id="tb-xp">320</span></div>
+  </div>
+</div>
+
+<!-- ════ SCREENS ════ -->
+
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div class="home-hero">
+    <div class="dog-row">
+      <div class="dog-av">🐶</div>
+      <div>
+        <div class="dog-name">שלום, <span id="hero-name">חבר</span>! 👋</div>
+        <div class="dog-sub">לברדור • 3 שנים</div>
+      </div>
+      <div class="str-pill">🔥 <span id="home-streak">7</span> ימים</div>
+    </div>
+    <div class="xp-row">
+      <div class="xp-lbl">XP</div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+      <div class="xp-num">320 / 1000</div>
+    </div>
+  </div>
+  <div class="day-card" onclick="tab('roadmap')">
+    <div class="day-ico">🎯</div>
+    <div class="day-info">
+      <div class="day-title">יעד יומי</div>
+      <div class="day-sub">0 מתוך 3 שיעורים הושלמו</div>
+      <div class="day-prog"><div class="day-fill"></div></div>
+    </div>
+    <button class="day-btn" onclick="event.stopPropagation();tab('roadmap')">התחל</button>
+  </div>
+  <div class="sec" style="margin-top:4px">
+    <div class="sec-h"><div class="sec-title">משימות היום</div><div class="sec-link" onclick="tab('roadmap')">כל התכנית</div></div>
+    <div class="task" onclick="toggleTask(this)">
+      <div class="task-chk">✓</div>
+      <div class="task-info"><div class="task-name">אימון: שב</div><div class="task-sub">5 דקות • רמה 2</div></div>
+      <div class="task-xp">+15 XP</div>
+    </div>
+    <div class="task" onclick="toggleTask(this)">
+      <div class="task-chk">✓</div>
+      <div class="task-info"><div class="task-name">הליכה בוקר</div><div class="task-sub">20 דקות</div></div>
+      <div class="task-xp">+10 XP</div>
+    </div>
+    <div class="task" onclick="toggleTask(this)">
+      <div class="task-chk">✓</div>
+      <div class="task-info"><div class="task-name">חיסון שנתי</div><div class="task-sub">🏥 עוד 3 ימים</div></div>
+      <div class="task-xp" style="background:var(--red-lt);color:var(--red)">דחוף!</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="sec">
+    <div class="sec-title" style="margin-bottom:12px">טיפ היום 💡</div>
+    <div class="tip-card">
+      <div class="tip-ico">🦮</div>
+      <div><div class="tip-tag">אימון חיובי</div><div class="tip-txt">חזקו תגמולים מיד אחרי ביצוע — כלבים לומדים הכי טוב כשהפרס מגיע תוך 2 שניות!</div></div>
+    </div>
+  </div>
+  <div class="scroll-pad"></div>
+</div>
+
+<!-- ROADMAP -->
+<div class="screen" id="screen-roadmap">
+  <div class="map-hdr">
+    <h1>תכנית האימון 🗺️</h1>
+    <p>המסלול האישי שלך</p>
+    <div class="map-prog"><div class="map-fill" style="width:18%"></div></div>
+    <div class="map-lbl">3 מתוך 7 רמות • 18% הושלמו</div>
+  </div>
+  <div class="map-body" id="map-body"></div>
+  <div class="scroll-pad"></div>
+</div>
+
+<!-- WELLNESS -->
+<div class="screen" id="screen-wellness">
+  <div class="well-hdr"><h1>בריאות ❤️</h1><p>מעקב רפואי ובריאותי</p></div>
+  <div class="well-stats">
+    <div class="wstat"><div class="wstat-ico">⚖️</div><div class="wstat-val">32</div><div class="wstat-unit">ק"ג</div><div class="wstat-lbl">משקל</div></div>
+    <div class="wstat"><div class="wstat-ico">🍖</div><div class="wstat-val">320</div><div class="wstat-unit">גרם</div><div class="wstat-lbl">מזון/יום</div></div>
+    <div class="wstat"><div class="wstat-ico">🚶</div><div class="wstat-val">45</div><div class="wstat-unit">דקות</div><div class="wstat-lbl">הליכה</div></div>
+  </div>
+  <div class="sec" style="margin-top:4px">
+    <div class="sec-h"><div class="sec-title">חיסונים ותרופות</div><div class="sec-link">+ הוסף</div></div>
+    <div class="vax-row"><div class="vax-dot" style="background:var(--green)"></div><div class="vax-name">כלבת</div><div class="vax-date">מרץ 2025</div><div class="vax-tag" style="background:var(--green-lt);color:var(--green-dk)">✓ עדכני</div></div>
+    <div class="vax-row"><div class="vax-dot" style="background:var(--orange)"></div><div class="vax-name">דיסטמפר</div><div class="vax-date">ינואר 2025</div><div class="vax-tag" style="background:#FFE8CC;color:var(--orange)">⚠ בקרוב</div></div>
+    <div class="vax-row"><div class="vax-dot" style="background:var(--red)"></div><div class="vax-name">פרעושים</div><div class="vax-date">אפריל 2025</div><div class="vax-tag" style="background:var(--red-lt);color:var(--red)">✗ פג</div></div>
+    <div class="vax-row"><div class="vax-dot" style="background:var(--green)"></div><div class="vax-name">תולעים</div><div class="vax-date">מאי 2025</div><div class="vax-tag" style="background:var(--green-lt);color:var(--green-dk)">✓ עדכני</div></div>
+  </div>
+  <div class="scroll-pad"></div>
+</div>
+
+<!-- CARE -->
+<div class="screen" id="screen-care">
+  <div class="care-hdr"><h1>יומן טיפול 📅</h1></div>
+  <div class="sec" style="margin-top:16px">
+    <div class="sec-h"><div class="sec-title">אירועים קרובים</div></div>
+    <div class="ev-card"><div class="ev-date"><div class="ev-d">25</div><div class="ev-m">מאי</div></div><div class="ev-info"><div class="ev-name">ביקורת וטרינר</div><div class="ev-time">🕙 10:00 • ד"ר כהן</div></div><div class="ev-ico" style="background:var(--red-lt)">🏥</div></div>
+    <div class="ev-card"><div class="ev-date"><div class="ev-d">28</div><div class="ev-m">מאי</div></div><div class="ev-info"><div class="ev-name">טיפוח ורחצה</div><div class="ev-time">🕑 14:00 • גרומר</div></div><div class="ev-ico" style="background:var(--blue-lt)">✂️</div></div>
+    <div class="ev-card"><div class="ev-date"><div class="ev-d">2</div><div class="ev-m">יוני</div></div><div class="ev-info"><div class="ev-name">שיעור אג'יליטי</div><div class="ev-time">🕚 11:00 • פארק</div></div><div class="ev-ico" style="background:var(--green-lt)">🏃</div></div>
+  </div>
+  <button class="fab">+ הוסף תזכורת</button>
+  <div class="scroll-pad"></div>
+</div>
+
+<!-- CHAT -->
+<div class="screen" id="screen-chat">
+  <div class="chat-hdr"><div class="ai">🤖</div><h1>עוזר למידוג</h1><p>שאל כל שאלה על <span id="chat-dog-name">הכלב</span> שלך</p></div>
+  <div class="chat-area" id="chat-area">
+    <div class="bubble bot">שלום! אני כאן לעזור לך עם כל שאלה על הכלב שלך 🐾<br>שאל על אימון, בריאות, תזונה ועוד!</div>
+  </div>
+  <div class="qqs">
+    <button class="qq" onclick="sendQ(this)">איך מלמדים שב?</button>
+    <button class="qq" onclick="sendQ(this)">כמה לאכול ביום?</button>
+    <button class="qq" onclick="sendQ(this)">למה הוא נובח?</button>
+    <button class="qq" onclick="sendQ(this)">חרדת פרידה</button>
+    <button class="qq" onclick="sendQ(this)">כלב חדש בבית</button>
+  </div>
+  <div class="chat-bar">
+    <input class="chat-inp" id="chat-inp" placeholder="שאל שאלה..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+    <button class="chat-send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<!-- ════ BOTTOM NAV ════ -->
+<nav class="bnav" id="main-nav" style="display:none">
+  <div class="bi active" onclick="tab('home')" id="nav-home"><div class="bi-icon">🏠</div><div class="bi-lbl">בית</div></div>
+  <div class="bi" onclick="tab('roadmap')" id="nav-roadmap"><div class="bi-icon">🗺️</div><div class="bi-lbl">תכנית</div></div>
+  <div class="bi" onclick="tab('wellness')" id="nav-wellness"><div class="bi-icon">❤️</div><div class="bi-lbl">בריאות</div></div>
+  <div class="bi" onclick="tab('care')" id="nav-care"><div class="bi-icon">📅</div><div class="bi-lbl">טיפול</div></div>
+  <div class="bi" onclick="tab('chat')" id="nav-chat"><div class="bi-icon">💬</div><div class="bi-lbl">צ'אט</div></div>
+</nav>
+
+<!-- ════ LESSON PREVIEW MODAL ════ -->
+<div class="modal-bg" id="prev-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-hero" id="prev-hero">
+      <div class="modal-emoji" id="prev-emoji">🐕</div>
+      <div class="modal-title" id="prev-title">שיעור</div>
+      <div class="modal-xp">⚡ <span id="prev-xp">+20</span> XP</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-steps-title">מה תלמד בשיעור זה:</div>
+      <ul style="list-style:none" id="prev-steps"></ul>
+      <button class="btn-start" onclick="startLesson()">🎯 התחל שיעור!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ LESSON SCREEN ════ -->
+<div id="lesson-screen">
+  <div class="ls-top">
+    <div class="ls-close" onclick="closeLesson()">✕</div>
+    <div class="ls-prog-wrap"><div class="ls-prog-fill" id="ls-prog" style="width:0%"></div></div>
+    <div class="ls-hearts-disp">❤️ <span id="ls-hearts">5</span></div>
+  </div>
+  <div class="ls-hero">
+    <span class="ls-emoji-big" id="ls-emoji">🐕</span>
+    <div class="ls-lesson-name" id="ls-name">שיעור</div>
+    <div class="ls-step-info" id="ls-info">שלב 1 מתוך 5</div>
+    <div class="ls-timer" id="ls-timer">00:00</div>
+  </div>
+  <div class="ls-body" id="ls-body">
+    <div class="ls-card" id="ls-card">
+      <div class="ls-card-icon" id="ls-icon">📖</div>
+      <div class="ls-card-title" id="ls-ctitle">כותרת</div>
+      <div class="ls-card-desc" id="ls-cdesc">תיאור</div>
+      <div class="ls-instr" id="ls-instr" style="display:none">
+        <div class="ls-instr-lbl">הוראה</div>
+        <div class="ls-instr-txt" id="ls-itext"></div>
+      </div>
+      <div class="ls-att-wrap" id="ls-att-wrap" style="display:none">
+        <div class="ls-att-lbl">סמן כל ניסיון (לחץ פעם אחת = ✓ הצלחה, פעמיים = ✗ כישלון):</div>
+        <div class="ls-att-row" id="ls-att-row"></div>
+      </div>
+      <div class="ls-tip" id="ls-tip" style="display:none">
+        <div class="ls-tip-ico">💡</div>
+        <div class="ls-tip-txt" id="ls-tip-txt"></div>
+      </div>
+    </div>
+  </div>
+  <div id="ls-success">
+    <div class="suc-burst">🎉</div>
+    <div class="stars-row"><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span></div>
+    <div class="suc-title">כל הכבוד!</div>
+    <div class="suc-sub" id="suc-sub">השיעור הושלם בהצלחה!</div>
+    <div class="xp-rew" id="suc-xp">+20 XP ⚡</div>
+    <button class="btn-finish" id="btn-finish" onclick="finishLesson()">השלב הבא →</button>
+  </div>
+  <div class="ls-footer" id="ls-foot">
+    <button class="btn-next purple" id="ls-next-btn" onclick="lsNext()">הבא →</button>
+  </div>
+</div>
+
+<script>
+// ════ APP STATE ════
+var APP = {
+  dog: { name: '', age: '', breed: '' },
+  xp: 320, hearts: 5, streak: 7,
+  completedIds: {},
+  chatHistory: [],
+  currentLesson: null,
+  ls: { stepIdx: 0, steps: [], secs: 0, timer: null }
+};
+
+// ════ LEVELS DATA ════
+var LEVELS = [
+  { n:1, color:'#C8A040', bg:'#FFF8E1', lessons:[
+    { id:'welcome',    pos:'R', name:'ברוכים הבאים',  emoji:'🐾', xp:10, done:true,  locked:false, steps:['הכירו את האפליקציה','הגדירו את הפרופיל','קראו את מדריך הפתיחה'] },
+    { id:'basics',     pos:'C', name:'יסודות',         emoji:'🦴', xp:15, done:false, locked:false, steps:['עקרון החיזוק החיובי','הכנת פרסים לאימון','סביבת אימון שקטה'] },
+    { id:'cmd_intro',  pos:'L', name:'מבוא לפקודות',  emoji:'👋', xp:15, done:false, locked:false, steps:['שפת גוף של כלב','יצירת קשר עין','פניה בשם'] }
+  ]},
+  { n:2, color:'#58CC02', bg:'#D7F5B1', lessons:[
+    { id:'first_days', pos:'R', name:'ימים ראשונים',  emoji:'🏠', xp:20, done:true,  locked:false, steps:['קביעת שגרה יומית','כללי הבית','הלילה הראשון'] },
+    { id:'house_rules',pos:'C', name:'כללי הבית',     emoji:'📋', xp:20, done:true,  locked:false, steps:['מקום שינה קבוע','אזורים מותרים ואסורים','ניהול הזנה קבועה'] },
+    { id:'sit',        pos:'L', name:'שב',             emoji:'🪑', xp:25, done:false, locked:false, current:true, notif:3, steps:['החזק גזר ליד אפו','הזז לאחור ולמעלה','אמור שב בבירור','תן גזר ושבח מיד','חזור 10 פעמים'] }
+  ]},
+  { n:3, color:'#1CB0F6', bg:'#DDF4FF', lessons:[
+    { id:'bad_beh',    pos:'R', name:'מניעת בעיות',   emoji:'🚫', xp:25, done:false, locked:false, steps:['זיהוי גורמי בעיה','טכניקת הסחת דעת','חיזוק חלופות חיוביות'] },
+    { id:'leave_it',   pos:'C', name:'עזוב',           emoji:'🙅', xp:25, done:false, locked:false, steps:['חפץ בכף יד סגורה','פתח כשעוצר לגשת','הוסף מילת עזוב'] },
+    { id:'come',       pos:'L', name:'בוא',            emoji:'🏃', xp:25, done:false, locked:false, steps:['התרחק מהכלב','קרוא בשם בטון שמח','שבח ופרס גדול'] },
+    { id:'social',     pos:'R', name:'חברות',          emoji:'🤝', xp:30, done:false, locked:false, steps:['חשיפה הדרגתית לכלבים','מפגשים מבוקרים','חיזוק חיובי במפגשים'] }
+  ]},
+  { n:4, color:'#FF9600', bg:'#FFE8CC', lessons:[
+    { id:'walk',       pos:'C', name:'הליכה ברצועה',  emoji:'🦮', xp:30, done:false, locked:false, steps:['התחל קרוב ובקצב איטי','עצור בכל משיכה','המשך כשהרצועה רפויה'] },
+    { id:'challenge',  pos:'L', name:'התנהגות מאתגרת',emoji:'⚡', xp:30, done:false, locked:false, steps:['זיהוי הטריגרים','אמון הסף','הפניית תשומת לב'] },
+    { id:'drop_it',    pos:'R', name:'שחרר',           emoji:'🎾', xp:25, done:false, locked:false, steps:['תחלף חפץ בגזר','אמור שחרר','תרגל עם חפצים שונים'] }
+  ]},
+  { n:5, color:'#FF4B4B', bg:'#FFDFE0', lessons:[
+    { id:'hand_sig',   pos:'C', name:'אותות יד',       emoji:'✋', xp:35, done:false, locked:false, steps:['אות ייחודי לכל פקודה','לימוד ללא מילים','שילוב מילה ואות'] },
+    { id:'fix_walk',   pos:'L', name:'תיקון הליכה',    emoji:'👟', xp:30, done:false, locked:false, steps:['עצירות תכופות','תגמל הליכה רגועה','הוסף מכשולים'] },
+    { id:'down',       pos:'R', name:'שכב',            emoji:'💤', xp:30, done:false, locked:false, steps:['מ-שב הנח גזר על הרצפה','עקוב עם גזר מטה','אמור שכב כשנשכב'] }
+  ]},
+  { n:6, color:'#9B80CC', bg:'#EDE0FF', lessons:[
+    { id:'place',      pos:'C', name:'מקום',           emoji:'🛏️', xp:35, done:false, locked:false, steps:['הצג שטיח','הנח גזר עליו','הגדל זמן ההישארות'] },
+    { id:'no_pull',    pos:'L', name:'ללא משיכה',      emoji:'🎀', xp:35, done:false, locked:false, steps:['שימוש בחגורת כתף','עצור בכל משיכה','תרגל בסביבות חדשות'] },
+    { id:'off',        pos:'R', name:'ירד',            emoji:'🙅', xp:30, done:false, locked:false, steps:['אמור ירד בבירור','הפנה את גוף הכלב','תגמל כשיורד'] }
+  ]},
+  { n:7, color:'#C8A040', bg:'#FFF3CC', lessons:[
+    { id:'guard',      pos:'C', name:'מניעת שמירה',   emoji:'🛡️', xp:40, done:false, locked:false, steps:['גישה הדרגתית לקערה','תחלוף אוכל בגזר','תרגול בנוכחות אנשים'] },
+    { id:'take_it',    pos:'L', name:'תפוס',           emoji:'👄', xp:35, done:false, locked:false, steps:['הצג חפץ ואמור תפוס','תגמל כשנוגע','הרחב לפקודת הבא'] },
+    { id:'stress',     pos:'R', name:'ניהול לחץ',     emoji:'😰', xp:40, done:false, locked:false, steps:['זיהוי סימני לחץ','יצירת סביבה בטוחה','תרגילי הרגעה'] },
+    { id:'transport',  pos:'C', name:'נסיעות',         emoji:'🚗', xp:35, done:false, locked:false, steps:['הרגל לרכב בעצירה','נסיעות קצרות','הוסף מרחקים הדרגתית'] }
+  ]}
+];
+
+// ════ QUIZ DATA ════
+var QUIZZES = {
+  lv1: { title:'בוחן רמה 1', emoji:'🧠', color:'#FFF8E1', xpBonus:50, questions:[
+    { q:'מהו העקרון החשוב ביותר באילוף חיובי?', opts:['ענישה על טעויות','תגמול מיידי על הצלחה','אימון ארוך'], correct:1, explain:'תגמול מיידי מחזק את הקשר בין פעולה לתוצאה.' },
+    { q:'תוך כמה זמן רצוי לתת את הפרס?', opts:['עד 2 שניות','אחרי 10 דקות','לא משנה'], correct:0, explain:'כלבים מחברים פרס לפעולה רק תוך 2 שניות.' },
+    { q:'כמה זמן מומלץ לסשן אימון אחד?', opts:['שעה שלמה','3-5 דקות','30 דקות'], correct:1, explain:'סשנים קצרים שומרים על ריכוז הכלב.' }
+  ]},
+  lv2: { title:'בוחן רמה 2', emoji:'🧠', color:'#D7F5B1', xpBonus:60, questions:[
+    { q:'מה כדאי להכין לפני האימון?', opts:['מקל עונשין','גזרים ופרסים קטנים','רשימת כללים'], correct:1, explain:'פרסים קטנים ומגוונים הם כלי האימון הטוב ביותר.' },
+    { q:'מה לעשות אם הכלב לא מבצע פקודה?', opts:['להעניש','לוותר','להחזיר לשלב קל יותר'], correct:2, explain:'חזרה לשלב קל מחזקת את הביטחון של הכלב.' },
+    { q:'מה קורה אם אנחנו עקביים בחוקי הבית?', opts:['הכלב מתבלבל','הכלב לומד מהר יותר','לא משנה'], correct:1, explain:'עקביות נותנת לכלב תחושת ביטחון.' }
+  ]},
+  lv3: { title:'בוחן רמה 3', emoji:'🧠', color:'#DDF4FF', xpBonus:70, questions:[
+    { q:'מה הסיבה הנפוצה לנביחה מופרזת?', opts:['הכלב רוצה לאכול','שעמום וחוסר גירוי','הוא אוהב אותך'], correct:1, explain:'כלבים משועממים נובחים כדי לפרוק אנרגיה.' },
+    { q:'איך מלמדים עזוב?', opts:['להוריד בכוח','כף יד סגורה ופתח כשעוצר','לצעוק עזוב'], correct:1, explain:'שיטת הכף הסגורה מלמדת שסבלנות מביאה לפרס.' },
+    { q:'מה חשוב בפקודת בוא?', opts:['להעניש אם לא מגיע','לתגמל בגדול כשמגיע','לא להגיד שם הכלב'], correct:1, explain:'הגעה אליך תמיד חייבת להיות חוויה מעולה.' }
+  ]},
+  lv4: { title:'בוחן רמה 4', emoji:'🧠', color:'#FFE8CC', xpBonus:80, questions:[
+    { q:'מה עושים כשהכלב מושך ברצועה?', opts:['מושכים חזק חזרה','ממשיכים ללכת','עוצרים עד שהרצועה רפויה'], correct:2, explain:'הכלב לומד שמשיכה עצירה. רצועה רפויה קדימה.' },
+    { q:'מה הסיבה לקפיצות על אנשים?', opts:['תוקפנות','חיפוש תשומת לב','פחד'], correct:1, explain:'קפיצות הן דרך לברכה. מפנים גב כשקופץ.' },
+    { q:'מה עוזר לפקודת שחרר?', opts:['לקחת בכוח','להציע פרס בתמורה','לצעוק'], correct:1, explain:'החלפה בפרס מלמדת שסרור הוא דבר טוב.' }
+  ]},
+  lv5: { title:'בוחן רמה 5', emoji:'🧠', color:'#FFDFE0', xpBonus:90, questions:[
+    { q:'למה כדאי ללמד אותות יד?', opts:['נראה מגניב','הכלב לומד לשים לב לגוף שלנו','אין סיבה'], correct:1, explain:'אותות יד מחזקים קשב ועובדים גם ממרחק.' },
+    { q:'מה עושים כשהכלב לא מצליח שלב?', opts:['לוותר','לחזור לשלב קודם','להמשיך בכוח'], correct:1, explain:'חזרה לשלב קל מחזקת ביסוס הלמידה.' },
+    { q:'כמה הצלחות צריך לפני מעבר לשלב הבא?', opts:['1-2','5-10','20+'], correct:1, explain:'5-10 הצלחות עקביות מבטיחות שהשיעור נלמד.' }
+  ]},
+  lv6: { title:'בוחן רמה 6', emoji:'🧠', color:'#EDE0FF', xpBonus:100, questions:[
+    { q:'מה מקום מלמד את הכלב?', opts:['לברוח','להישאר בנקודה מוגדרת','ללכת לישון'], correct:1, explain:'מקום הוא אחת הפקודות השימושיות ביותר.' },
+    { q:'מה עוזר בסביבה עם הסחות רבות?', opts:['רצועה קצרה','אימון מקדים בסביבה שקטה','להוריד רצועה'], correct:1, explain:'תמיד מאמנים קודם בסביבה שקטה.' },
+    { q:'איך מאמנים ירד מרהיטים?', opts:['לדחוף בכוח','להפנות גב ולתגמל ירידה','להתעלם'], correct:1, explain:'הפניית גב מסירה את הגירוי. תגמול ירידה מחזק אלטרנטיבה.' }
+  ]},
+  lv7: { title:'בוחן רמה 7', emoji:'🧠', color:'#FFF3CC', xpBonus:120, questions:[
+    { q:'מה הגישה לשמירת משאבים?', opts:['להוריד בכוח','גישה הדרגתית ותחלוף בפרס','להתעלם'], correct:1, explain:'גישה הדרגתית מלמדת שהתקרבות אינה איום.' },
+    { q:'איך עוזרים לכלב עם חרדת נסיעות?', opts:['נסיעה ארוכה מיד','הרגלה הדרגתית','לא לנסוע'], correct:1, explain:'חשיפה הדרגתית בונה אסוציאציה חיובית לרכב.' },
+    { q:'מה עוזר לכלב בסיטואציות לחץ?', opts:['להכריח להתמודד','מרחב בטוח בקצב שלו','לצעוק'], correct:1, explain:'כלבים לומדים הכי טוב כשהם מרגישים בשליטה.' }
+  ]}
+};
+
+var QUIZ = { levelN: 0, qIdx: 0, score: 0, total: 0 };
+
+// ════ HELPERS ════
+function allLessons() {
+  var result = [];
+  for (var i = 0; i < LEVELS.length; i++) {
+    for (var j = 0; j < LEVELS[i].lessons.length; j++) {
+      result.push(LEVELS[i].lessons[j]);
+    }
+  }
+  return result;
+}
+
+function getEl(id) { return document.getElementById(id); }
+
+// ════ ONBOARDING ════
+var obStep = 0;
+
+function obNext() {
+  var curId = obStep === 0 ? 'ob-splash' : 'ob-' + obStep;
+  var cur = getEl(curId);
+  if (cur) cur.classList.remove('on');
+  obStep++;
+  if (obStep === 6) startObLoad();
+  var next = getEl('ob-' + obStep);
+  if (next) {
+    next.classList.add('on');
+    next.scrollTop = 0;
+  }
+}
+
+function obBack() {
+  getEl('ob-' + obStep).classList.remove('on');
+  obStep--;
+  var prevId = obStep === 0 ? 'ob-splash' : 'ob-' + obStep;
+  var prev = getEl(prevId);
+  prev.classList.add('on');
+  prev.scrollTop = 0;
+}
+
+function pickOne(el) {
+  var cards = el.closest('.ob-2col').querySelectorAll('.ob-card');
+  for (var i = 0; i < cards.length; i++) cards[i].classList.remove('sel');
+  el.classList.add('sel');
+}
+
+function pickCh(el) {
+  var chs = el.closest('.ob-choices').querySelectorAll('.ob-ch');
+  for (var i = 0; i < chs.length; i++) chs[i].classList.remove('sel');
+  el.classList.add('sel');
+}
+
+function pickPrice(el) {
+  var cards = document.querySelectorAll('.price-card');
+  for (var i = 0; i < cards.length; i++) cards[i].classList.remove('sel');
+  el.classList.add('sel');
+}
+
+var OB_REVIEWS = [
+  '"הכלב שלי למד שב תוך יומיים!"',
+  '"סוף סוף אפליקציה שבאמת עובדת בעברית"',
+  '"השתמשתי שבוע ורואים שינוי ענק!"'
+];
+
+function startObLoad() {
+  var loads = [
+    { t: 'מנתח גזע הכלב שלך', max: 100 },
+    { t: 'מנתח רמת הלמידה', max: 90 },
+    { t: 'בוחן בעיות התנהגות', max: 80 },
+    { t: 'יוצר תכנית אישית', max: 100 }
+  ];
+  var wrap = getEl('ob-loads');
+  var html = '';
+  for (var i = 0; i < loads.length; i++) {
+    html += '<div class="ob-load">';
+    html += '<div class="ob-load-row"><span>' + loads[i].t + '</span><span class="ob-load-pct" id="lp' + i + '">0%</span></div>';
+    html += '<div class="ob-load-bar"><div class="ob-load-fill" id="lf' + i + '"></div></div>';
+    html += '</div>';
+  }
+  wrap.innerHTML = html;
+
+  var ri = 0;
+  var revEl = getEl('ob-review');
+  var revIv = setInterval(function() {
+    ri = (ri + 1) % OB_REVIEWS.length;
+    if (revEl) {
+      revEl.style.opacity = 0;
+      setTimeout(function() {
+        revEl.textContent = OB_REVIEWS[ri];
+        revEl.style.opacity = 1;
+      }, 300);
+    }
+  }, 2400);
+
+  var done = 0;
+  loads.forEach(function(l, i) {
+    var cur = 0;
+    var iv = setInterval(function() {
+      cur = Math.min(cur + Math.random() * 9 + 3, l.max);
+      var f = getEl('lf' + i);
+      var p = getEl('lp' + i);
+      if (f) f.style.width = cur + '%';
+      if (p) p.textContent = Math.round(cur) + '%';
+      if (cur >= l.max) {
+        clearInterval(iv);
+        done++;
+        if (done === loads.length) {
+          clearInterval(revIv);
+          setTimeout(obNext, 700);
+        }
+      }
+    }, 110 + i * 50);
+  });
+}
+
+function launchApp() {
+  getEl('ob').style.display = 'none';
+  getEl('main-top').style.display = 'flex';
+  getEl('main-nav').style.display = 'flex';
+  buildRoadmap();
+  tab('home');
+  setTimeout(function() { getEl('xp-fill').style.width = '32%'; }, 400);
+}
+
+// ════ NAVIGATION ════
+function tab(name) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  var navItems = document.querySelectorAll('.bi');
+  for (var i = 0; i < navItems.length; i++) navItems[i].classList.remove('active');
+  getEl('screen-' + name).classList.add('active');
+  getEl('nav-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleTask(card) {
+  var ch = card.querySelector('.task-chk');
+  ch.classList.toggle('done');
+  if (ch.classList.contains('done')) {
+    APP.xp += 10;
+    getEl('tb-xp').textContent = APP.xp;
+  }
+}
+
+// ════ BUILD ROADMAP ════
+function buildRoadmap() {
+  var wrap = getEl('map-body');
+  var html = '';
+  for (var li = 0; li < LEVELS.length; li++) {
+    var lv = LEVELS[li];
+    html += '<div class="lv-banner" style="background:' + lv.color + ';">⭐ רמה ' + lv.n + '</div>';
+    for (var i = 0; i < lv.lessons.length; i++) {
+      var les = lv.lessons[i];
+      var done = APP.completedIds[les.id] || les.done;
+      var bubClass = done ? 'done' : (les.current ? 'current' : (les.locked ? 'locked' : 'idle'));
+      var inner = les.emoji;
+      if (done) inner += '<div class="node-crown">👑</div>';
+      if (les.locked) inner += '<div class="node-lock">🔒</div>';
+      if (les.notif) inner += '<div class="node-notif">' + les.notif + '</div>';
+      var clickAttr = les.locked ? '' : 'onclick="openLesson(\'' + les.id + '\')"';
+      var rowClass = 'snake-row';
+      if (les.pos === 'L') rowClass += ' left';
+      else if (les.pos === 'R') rowClass += ' right';
+      var lblClass = les.current ? 'node-lbl cur' : 'node-lbl';
+      html += '<div class="' + rowClass + '">';
+      html += '<div class="node" ' + clickAttr + '>';
+      html += '<div class="node-bub ' + bubClass + '">' + inner + '</div>';
+      html += '<div class="' + lblClass + '">' + les.name + '</div>';
+      html += '</div></div>';
+      if (i < lv.lessons.length - 1) {
+        var nextPos = lv.lessons[i + 1].pos;
+        var curX = les.pos === 'L' ? 25 : (les.pos === 'R' ? 75 : 50);
+        var nxtX = nextPos === 'L' ? 25 : (nextPos === 'R' ? 75 : 50);
+        html += '<div class="snake-conn">';
+        html += '<svg width="80%" height="40" viewBox="0 0 300 40" fill="none" preserveAspectRatio="none">';
+        html += '<path d="M' + (curX * 3) + ' 0 Q150 20 ' + (nxtX * 3) + ' 40" stroke="#DDDDDD" stroke-width="6" stroke-dasharray="12 8" stroke-linecap="round"/>';
+        html += '</svg></div>';
+      }
+    }
+    if (li < LEVELS.length - 1) {
+      html += '<div style="display:flex;justify-content:center;height:32px;background:#fff;">';
+      html += '<svg width="6" height="32" viewBox="0 0 6 32"><path d="M3 0 L3 32" stroke="#DDDDDD" stroke-width="6" stroke-dasharray="10 6" stroke-linecap="round"/></svg>';
+      html += '</div>';
+    }
+    html += '<div style="height:8px;background:#fff;"></div>';
+  }
+  wrap.innerHTML = html;
+}
+
+// ════ LESSON PREVIEW ════
+function openLesson(id) {
+  var all = allLessons();
+  var les = null;
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].id === id) { les = all[i]; break; }
+  }
+  if (!les || les.locked) return;
+  APP.currentLesson = les;
+  var lv = null;
+  for (var i = 0; i < LEVELS.length; i++) {
+    for (var j = 0; j < LEVELS[i].lessons.length; j++) {
+      if (LEVELS[i].lessons[j].id === id) { lv = LEVELS[i]; break; }
+    }
+    if (lv) break;
+  }
+  var heroBg = lv ? lv.bg : '#EDE0FF';
+  getEl('prev-hero').style.background = heroBg;
+  getEl('prev-emoji').textContent = les.emoji;
+  getEl('prev-title').textContent = les.name;
+  getEl('prev-xp').textContent = '+' + les.xp;
+  var stepsHtml = '';
+  for (var i = 0; i < les.steps.length; i++) {
+    stepsHtml += '<li class="mstep"><div class="mstep-n">' + (i + 1) + '</div><div class="mstep-t">' + les.steps[i] + '</div></li>';
+  }
+  getEl('prev-steps').innerHTML = stepsHtml;
+  getEl('prev-modal').classList.add('open');
+}
+
+// ════ LESSON ENGINE ════
+var LS_ICONS  = ['📖','👀','🤚','🎯','🔄','✅'];
+var LS_TITLES = ['מבוא לשיעור','צפייה בדוגמה','ניסיון ראשון','בואו נתרגל','שיפור','סיכום'];
+var LS_TIPS   = [null,'כלבים לומדים הכי טוב בסשנים קצרים של 3-5 דקות!','אם הכלב לא מגיב — הפחת הסחות דעת','חזרה היא המפתח — 5-10 הצלחות = שיעור שנלמד!','עבור לתגמולים אקראיים לחיזוק ארוך-טווח!',null];
+
+function startLesson() {
+  var les = APP.currentLesson;
+  if (!les) return;
+  getEl('prev-modal').classList.remove('open');
+  APP.ls.steps = [];
+  for (var i = 0; i < les.steps.length; i++) {
+    APP.ls.steps.push({
+      icon:  LS_ICONS[i]  || '🐾',
+      title: LS_TITLES[i] || ('שלב ' + (i + 1)),
+      desc:  les.steps[i],
+      hasAttempts: i >= 2 && i < les.steps.length - 1,
+      tip:   LS_TIPS[i] || null
+    });
+  }
+  APP.ls.stepIdx = 0;
+  APP.ls.secs = 0;
+  APP.hearts = 5;
+  getEl('ls-emoji').textContent = les.emoji;
+  getEl('ls-name').textContent = les.name;
+  getEl('ls-hearts').textContent = APP.hearts;
+  getEl('tb-hearts').textContent = APP.hearts;
+  getEl('ls-success').classList.remove('show');
+  getEl('ls-body').style.display = 'block';
+  getEl('ls-foot').style.display = 'block';
+  getEl('lesson-screen').classList.add('open');
+  clearInterval(APP.ls.timer);
+  APP.ls.timer = setInterval(function() {
+    APP.ls.secs++;
+    var m = String(Math.floor(APP.ls.secs / 60)).padStart(2, '0');
+    var s = String(APP.ls.secs % 60).padStart(2, '0');
+    getEl('ls-timer').textContent = m + ':' + s;
+  }, 1000);
+  renderLsStep();
+}
+
+function renderLsStep() {
+  var step = APP.ls.steps[APP.ls.stepIdx];
+  if (!step) return;
+  var total = APP.ls.steps.length;
+  var pct = Math.round((APP.ls.stepIdx / total) * 100);
+  var isLast = APP.ls.stepIdx === total - 1;
+  getEl('ls-prog').style.width = pct + '%';
+  getEl('ls-info').textContent = 'שלב ' + (APP.ls.stepIdx + 1) + ' מתוך ' + total;
+  getEl('ls-icon').textContent = step.icon;
+  getEl('ls-ctitle').textContent = step.title;
+  getEl('ls-cdesc').textContent = step.desc;
+  var instrEl = getEl('ls-instr');
+  var attWrap = getEl('ls-att-wrap');
+  var attRow  = getEl('ls-att-row');
+  var nextBtn = getEl('ls-next-btn');
+  if (step.hasAttempts) {
+    instrEl.style.display = 'block';
+    getEl('ls-itext').textContent = 'נסה עם ' + (APP.dog.name || 'הכלב') + ' 5 פעמים:';
+    attWrap.style.display = 'block';
+    attRow.innerHTML = '';
+    for (var i = 0; i < 5; i++) {
+      (function(idx) {
+        var b = document.createElement('button');
+        b.className = 'att-btn pend';
+        b.textContent = '○';
+        b.dataset.state = '';
+        b.addEventListener('click', function() { tapAtt(b); });
+        attRow.appendChild(b);
+      })(i);
+    }
+    nextBtn.textContent = 'תרגל קודם...';
+    nextBtn.disabled = true;
+    nextBtn.className = 'btn-next purple';
+  } else {
+    instrEl.style.display = 'none';
+    attWrap.style.display = 'none';
+    nextBtn.disabled = false;
+    nextBtn.className = 'btn-next ' + (isLast ? 'green' : 'purple');
+    nextBtn.textContent = isLast ? 'סיים שיעור!' : 'הבא';
+  }
+  var tipEl = getEl('ls-tip');
+  var tipTxt = getEl('ls-tip-txt');
+  if (step.tip) {
+    tipEl.style.display = 'flex';
+    tipTxt.textContent = step.tip;
+  } else {
+    tipEl.style.display = 'none';
+  }
+  var card = getEl('ls-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'bounceIn .3s ease';
+}
+
+function tapAtt(btn) {
+  var state = btn.dataset.state;
+  var next = state === '' ? 'ok' : (state === 'ok' ? 'no' : '');
+  btn.dataset.state = next;
+  btn.className = 'att-btn ' + (next === '' ? 'pend' : next);
+  btn.textContent = next === 'ok' ? '✓' : (next === 'no' ? '✗' : '○');
+  if (next === 'no') {
+    APP.hearts = Math.max(0, APP.hearts - 1);
+    getEl('ls-hearts').textContent = APP.hearts;
+    getEl('tb-hearts').textContent = APP.hearts;
+  }
+  var all = document.querySelectorAll('.att-btn');
+  var allDone = true;
+  var okCount = 0;
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].dataset.state === '') { allDone = false; break; }
+    if (all[i].dataset.state === 'ok') okCount++;
+  }
+  if (allDone) {
+    var nb = getEl('ls-next-btn');
+    nb.textContent = 'המשך (' + okCount + '/5) →';
+    nb.disabled = false;
+    nb.className = 'btn-next green';
+  }
+}
+
+function lsNext() {
+  if (APP.ls.stepIdx >= APP.ls.steps.length - 1) {
+    finishLessonScreen();
+    return;
+  }
+  APP.ls.stepIdx++;
+  renderLsStep();
+}
+
+function finishLessonScreen() {
+  clearInterval(APP.ls.timer);
+  getEl('ls-body').style.display = 'none';
+  getEl('ls-foot').style.display = 'none';
+  getEl('ls-prog').style.width = '100%';
+  getEl('ls-success').classList.add('show');
+  var pts = (APP.currentLesson && APP.currentLesson.xp) || 20;
+  var mins = Math.floor(APP.ls.secs / 60);
+  var secs = APP.ls.secs % 60;
+  var name = APP.dog.name || 'הכלב';
+  getEl('suc-sub').textContent = name + ' ואתה עשיתם עבודה נהדרת! ' + (mins > 0 ? mins + 'd ' : '') + secs + 's';
+  getEl('suc-xp').textContent = '+' + pts + ' XP';
+  APP.xp += pts;
+  getEl('tb-xp').textContent = APP.xp;
+  getEl('btn-finish').textContent = 'סיים שיעור';
+}
+
+function getNextLesson() {
+  if (!APP.currentLesson) return null;
+  var all = allLessons();
+  var idx = -1;
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].id === APP.currentLesson.id) { idx = i; break; }
+  }
+  if (idx < 0) return null;
+  for (var i = idx + 1; i < all.length; i++) {
+    if (!all[i].locked) return all[i];
+  }
+  return null;
+}
+
+function finishLesson() {
+  var les = APP.currentLesson;
+  var shouldShowQuiz = false;
+  var quizLevelN = 0;
+  var nextLesId = null;
+  if (les) {
+    APP.completedIds[les.id] = true;
+    les.done = true; les.current = false; les.notif = 0;
+    var all = allLessons();
+    var idx = -1;
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].id === les.id) { idx = i; break; }
+    }
+    if (idx >= 0 && idx < all.length - 1) {
+      all[idx + 1].locked = false;
+      all[idx + 1].current = true;
+    }
+    var levelObj = null;
+    for (var i = 0; i < LEVELS.length; i++) {
+      for (var j = 0; j < LEVELS[i].lessons.length; j++) {
+        if (LEVELS[i].lessons[j].id === les.id) { levelObj = LEVELS[i]; break; }
+      }
+      if (levelObj) break;
+    }
+    if (levelObj) {
+      var allDone = true;
+      for (var i = 0; i < levelObj.lessons.length; i++) {
+        if (!levelObj.lessons[i].done && !APP.completedIds[levelObj.lessons[i].id]) {
+          allDone = false; break;
+        }
+      }
+      if (allDone) { shouldShowQuiz = true; quizLevelN = levelObj.n; }
+    }
+    if (!shouldShowQuiz) {
+      var nextLes = getNextLesson();
+      if (nextLes) nextLesId = nextLes.id;
+    }
+  }
+  closeLesson();
+  buildRoadmap();
+  tab('roadmap');
+  if (shouldShowQuiz) {
+    setTimeout(function() { showQuiz(quizLevelN); }, 600);
+  } else if (nextLesId) {
+    setTimeout(function() { openLesson(nextLesId); }, 700);
+  }
+}
+
+function closeLesson() {
+  clearInterval(APP.ls.timer);
+  getEl('lesson-screen').classList.remove('open');
+  getEl('ls-body').style.display = 'block';
+  getEl('ls-foot').style.display = 'block';
+  getEl('ls-success').classList.remove('show');
+  getEl('ls-prog').style.width = '0%';
+}
+
+// ════ QUIZ ════
+function showQuiz(levelN) {
+  var key = 'lv' + levelN;
+  var quiz = QUIZZES[key];
+  if (!quiz) return;
+  QUIZ.levelN = levelN;
+  QUIZ.qIdx = 0; QUIZ.score = 0; QUIZ.total = quiz.questions.length;
+  renderQuizQuestion(quiz);
+  var modal = getEl('prev-modal');
+  modal.onclick = function(e) { if (e.target === modal) modal.classList.remove('open'); };
+  modal.classList.add('open');
+}
+
+function renderQuizQuestion(quiz) {
+  var q = quiz.questions[QUIZ.qIdx];
+  var letters = ['א','ב','ג'];
+  var sheet = document.querySelector('#prev-modal .modal-sheet');
+  var optsHtml = '';
+  for (var i = 0; i < q.opts.length; i++) {
+    optsHtml += '<div class="quiz-option" onclick="selectQuizAnswer(this,' + i + ',' + q.correct + ')">';
+    optsHtml += '<div class="opt-letter">' + letters[i] + '</div>' + q.opts[i] + '</div>';
+  }
+  var pct = Math.round(QUIZ.qIdx / quiz.questions.length * 100);
+  var html = '<div class="modal-handle"></div>';
+  html += '<div class="modal-hero" style="background:' + quiz.color + '">';
+  html += '<div class="modal-emoji">' + quiz.emoji + '</div>';
+  html += '<div class="modal-title">' + quiz.title + '</div>';
+  html += '<div style="margin-top:8px;font-size:13px;font-weight:700;color:var(--gray)">שאלה ' + (QUIZ.qIdx + 1) + ' מתוך ' + quiz.questions.length + '</div>';
+  html += '<div style="margin-top:10px;background:var(--gray-mid);border-radius:10px;height:8px;overflow:hidden;">';
+  html += '<div style="height:100%;background:var(--purple);border-radius:10px;width:' + pct + '%;"></div></div></div>';
+  html += '<div class="modal-body">';
+  html += '<div class="quiz-result-banner" id="quiz-banner"></div>';
+  html += '<div class="quiz-q-block"><div class="quiz-q-text">' + q.q + '</div>' + optsHtml + '</div>';
+  html += '<button class="btn-start" id="quiz-next-btn" disabled onclick="quizNext()" style="background:var(--purple);box-shadow:0 4px 0 var(--purple-dk);">הבא</button>';
+  html += '</div>';
+  sheet.innerHTML = html;
+}
+
+function selectQuizAnswer(el, choice, correct) {
+  var opts = el.closest('.modal-body').querySelectorAll('.quiz-option');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.add('locked');
+  var banner = getEl('quiz-banner');
+  var quiz = QUIZZES['lv' + QUIZ.levelN];
+  var q = quiz.questions[QUIZ.qIdx];
+  if (choice === correct) {
+    el.classList.add('correct');
+    QUIZ.score++;
+    banner.textContent = 'נכון! ' + q.explain;
+    banner.className = 'quiz-result-banner show ok';
+  } else {
+    el.classList.add('wrong');
+    opts[correct].classList.add('correct');
+    banner.textContent = 'לא נכון. ' + q.explain;
+    banner.className = 'quiz-result-banner show bad';
+  }
+  var nb = getEl('quiz-next-btn');
+  nb.disabled = false;
+  var isLast = QUIZ.qIdx === quiz.questions.length - 1;
+  nb.textContent = isLast ? 'סיים בוחן' : 'הבאה';
+}
+
+function quizNext() {
+  var quiz = QUIZZES['lv' + QUIZ.levelN];
+  QUIZ.qIdx++;
+  if (QUIZ.qIdx >= quiz.questions.length) {
+    showQuizResult(quiz);
+  } else {
+    renderQuizQuestion(quiz);
+  }
+}
+
+function showQuizResult(quiz) {
+  var passed = QUIZ.score >= Math.ceil(quiz.questions.length * 0.6);
+  var pct = Math.round((QUIZ.score / quiz.questions.length) * 100);
+  var xpGain = passed ? quiz.xpBonus : Math.round(quiz.xpBonus * 0.3);
+  APP.xp += xpGain;
+  getEl('tb-xp').textContent = APP.xp;
+  var sheet = document.querySelector('#prev-modal .modal-sheet');
+  var heroBg = passed ? 'var(--green-lt)' : 'var(--red-lt)';
+  var heroEmoji = passed ? '🏆' : '📚';
+  var heroTitle = passed ? 'כל הכבוד!' : 'נסה שוב!';
+  var resultText = passed
+    ? 'עברת את הרמה! השגת ' + QUIZ.score + ' מתוך ' + quiz.questions.length
+    : 'השגת ' + QUIZ.score + ' מתוך ' + quiz.questions.length + '. חזור על החומר ונסה שוב!';
+  var btnHtml = passed
+    ? '<button class="btn-start" onclick="finishQuiz(true)" style="background:var(--green);box-shadow:0 4px 0 var(--green-dk);">המשך לרמה הבאה</button>'
+    : '<button class="btn-start" onclick="showQuiz(' + QUIZ.levelN + ')" style="background:var(--purple);box-shadow:0 4px 0 var(--purple-dk);margin-bottom:10px;">נסה שוב</button><br><button onclick="finishQuiz(false)" style="width:100%;background:none;border:none;font-family:var(--font);font-size:14px;font-weight:700;color:var(--gray);padding:10px;cursor:pointer;">חזור לתכנית</button>';
+  var html = '<div class="modal-handle"></div>';
+  html += '<div class="modal-hero" style="background:' + heroBg + '">';
+  html += '<div class="modal-emoji">' + heroEmoji + '</div>';
+  html += '<div class="modal-title">' + heroTitle + '</div></div>';
+  html += '<div class="modal-body" style="text-align:center;padding-top:20px;">';
+  html += '<div class="quiz-score-circle">' + QUIZ.score + '/' + quiz.questions.length + '<small>' + pct + '%</small></div>';
+  html += '<div style="font-size:15px;font-weight:800;color:var(--black);margin-bottom:8px;">' + resultText + '</div>';
+  html += '<div style="background:var(--gold-lt);border:2px solid var(--gold);border-radius:14px;padding:12px;font-size:18px;font-weight:900;color:var(--gold-dk);margin-bottom:20px;">+' + xpGain + ' XP</div>';
+  html += btnHtml + '</div>';
+  sheet.innerHTML = html;
+}
+
+function finishQuiz(passed) {
+  getEl('prev-modal').classList.remove('open');
+  buildRoadmap();
+  if (passed) {
+    var nextLvIdx = QUIZ.levelN;
+    if (nextLvIdx < LEVELS.length) {
+      var nextLevel = LEVELS[nextLvIdx];
+      if (nextLevel && nextLevel.lessons.length > 0) {
+        nextLevel.lessons[0].locked = false;
+        nextLevel.lessons[0].current = true;
+        buildRoadmap();
+        setTimeout(function() { openLesson(nextLevel.lessons[0].id); }, 500);
+      }
+    }
+  }
+}
+
+// ════ CHAT ════
+function sendMsg() {
+  var inp = getEl('chat-inp');
+  var msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+  addBubble(msg, 'user');
+  APP.chatHistory.push({ role: 'user', content: msg });
+  var tid = addTyping();
+  var msgs = APP.chatHistory.slice(-8);
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: 'אתה עוזר מומחה לאימון כלבים בעברית. ענה קצר (2-3 משפטים) עם אמוג\'י.',
+      messages: msgs
+    })
+  }).then(function(r) {
+    return r.json();
+  }).then(function(d) {
+    removeTyping(tid);
+    var rep = (d.content && d.content[0] && d.content[0].text) || chatFallback(msg);
+    APP.chatHistory.push({ role: 'assistant', content: rep });
+    addBubble(rep, 'bot');
+  }).catch(function() {
+    removeTyping(tid);
+    addBubble(chatFallback(msg), 'bot');
+  });
+}
+
+function sendQ(b) { getEl('chat-inp').value = b.textContent; sendMsg(); }
+
+function chatFallback(m) {
+  if (m.indexOf('שב') >= 0) return 'החזק גזר ליד אפו, הזז לאחור — הכלב ישב. תגמל מיד! חזור 5-10 פעמים 🐕';
+  if (m.indexOf('אכול') >= 0) return 'הכמות תלויה בגודל הכלב. בדרך כלל 2 ארוחות ביום — בדוק עם הוטרינר 🍖';
+  if (m.indexOf('נוב') >= 0) return 'נביחה = שעמום, חרדה או תשומת לב. פעילות גופנית ומשחקי חשיבה עוזרים! 🔇';
+  if (m.indexOf('חרד') >= 0) return 'נסה עזיבות קצרות, השאר בגד עם ריחך ומשחקי חשיבה בזמן ההיעדרות 🧸';
+  return 'שאלה מעולה! פנה למאלף מוסמך לייעוץ אישי — כל כלב הוא עולם בפני עצמו 🐾';
+}
+
+function addBubble(t, type) {
+  var a = getEl('chat-area');
+  var d = document.createElement('div');
+  d.className = 'bubble ' + type;
+  d.textContent = t;
+  a.appendChild(d);
+  a.scrollTop = a.scrollHeight;
+}
+
+function addTyping() {
+  var a = getEl('chat-area');
+  var id = 't' + Date.now();
+  var d = document.createElement('div');
+  d.className = 't-ind'; d.id = id;
+  d.innerHTML = '<div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>';
+  a.appendChild(d);
+  a.scrollTop = a.scrollHeight;
+  return id;
+}
+
+function removeTyping(id) {
+  var e = getEl(id);
+  if (e) e.remove();
+}
+</script>
+</body>
+</html>
